@@ -1,0 +1,5 @@
+﻿.table-hover tbody tr:hover td {
+    font-weight: bold;
+    transform: scale(1.02);
+    transition: transform .2s;
+}

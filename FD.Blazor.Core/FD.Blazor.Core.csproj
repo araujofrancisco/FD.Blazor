@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Francisco Araujo</Authors>
+    <Description>Library including some code functions and extensions to use on FD.Blazor Components.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/FD.Blazor.Core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>blazor, linq, sorting, extension</PackageTags>
+    <PackageReleaseNotes>
+      - Initial release
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+</Project>

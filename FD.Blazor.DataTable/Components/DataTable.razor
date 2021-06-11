@@ -1,0 +1,273 @@
+﻿@using System.Text;
+
+@typeparam TModel
+
+@{
+    var visibleColumns = Columns.Where(e => e.IsVisible).ToList();
+}
+
+<CascadingValue Value="this">
+    <div class="@ContainerCssClass" @attributes="ContainerAttributes">
+        <table class="@CssClass @GetTableStyleCssClasses()" @attributes="TableAttributes">
+            <thead>
+                <tr>
+                    @foreach (DataTableColumn<TModel> column in visibleColumns)
+                    {
+                        <th id=@column.Guid.ToString()>
+
+                            @if (column.HeaderTemplate != null)
+                            {
+                                <span style="cursor: pointer" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)">@column.HeaderTemplate(column.CustomTitle != null ? column.CustomTitle : column.GetColumnVisualPropertyName())</span>
+                            }
+                            else if (column.CustomTitle != null)
+                            {
+                                <span style="cursor: pointer" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)">@column.CustomTitle</span>
+                            }
+                            else
+                            {
+                                <span style="cursor: pointer" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)">@column.GetColumnVisualPropertyName()</span>
+                            }
+
+                            <div class="d-inline-block">
+                                @if (column.IsSortable)
+                                {
+                                    @if (SortColumnGuid.HasValue && column.Guid == SortColumnGuid.Value)
+                                    {
+                                        @if (SortDirection == SortDirection.Descending)
+                                        {
+                                            <img style="cursor: pointer" height="15" width="15" alt="SortDown" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABhElEQVR4Xu2YMUqDQRCFvxQ2duItbFJZBsE7eA5BMNhYi0XwIJ7BTq3tvIVtGkFZSCCVuLMzO8W8v0rxz768b9/LsllQ/FkU948AKAHFCagCxQOgH0FVQBUoTkAVKB4AnQKqgCpQnIAqUDwAOgVUAVWgOAFVoHgAdAqoAqpAcQKqQPEA6BRQBVSB4gRUgYEAHANXwMnAGh6jX8AzsLUsZk3AEfAGnFtEA2begQvgu3dtK4BL4KVXLPj9FfDaq2EFsAQ+esWC3z8DPns1rACazga46RUMev8RuLOsPQKgzT4B1xZhx5m2EbfAj2XNEQBNLxvCkPm9AQu4w5ksCMPmvQBkJMHFvCeAmRDczHsDmAHB1XwEgEgI7uajAERACDEfCcATQpj5aAAeEELNzwAwAiHc/CwAFghTzM8E0ANhmvnZAP4DYar5DAB/QZhuPgvAXvcBWO+use3zvfVKO3KbG70Oj2i32dOd6fbHZsqTDSDF9KGoAKRvQfIXUAKSNyBdvnwCfgHh8z9BuCGmqwAAAABJRU5ErkJggg==" />
+                                        }
+                                        else
+                                        {
+                                            <img style="cursor: pointer" height="15" width="15" alt="SortUp" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABlUlEQVR4Xu3XMUoEURCE4d9AMDfxECZmBgZ6BM8hCIqBZxANxIN4AwPR1MxDCF7AQJSBNREWfW+66zVMbTw71f11bbAbLPyzsfD9MYAbsHAB/wQGF2AH+ALeRs0xqgFT7jVwvlr8CrhcYUgtRgBMmXfAya9Nb4EzNYIaYN3yPxZyBCXAX8sPQVAB/Hd5OYICoHV5KUI2QO/yMoRMgLnLSxCyAKKWT0fIAIhePhUhGiBr+TSESIDs5VMQogBUy4cjRAColw9FmAswavkwhDkAo5cPQZgDMP1zO5X+eV8fdgNc9MzSC7AHvPQEJn5nF3htfX8vwBHw0BqW/PwB8Nya0QuwCTwC+62BSc8/AYfAZ+v7ewGmnC3gGNhuDQ1+/h24Bz563jsHoCev3HcMUO4k4oHcADF4uTg3oNxJxAO5AWLwcnFuQLmTiAdyA8Tg5eLcgHInEQ/kBojBy8W5AeVOIh7IDRCDl4tzA8qdRDyQGyAGLxfnBpQ7iXggN0AMXi7ODSh3EvFAboAYvFycG1DuJOKBFt+AbyhyPkHtGJ1/AAAAAElFTkSuQmCC" />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <img style="cursor: pointer" height="15" width="15" alt="SortUpDown" @onclick="(args) => OnColumnHeaderClickedEvent(args, column)" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB20lEQVR4nO2bsU5CQRBFD2KMiVZ2hkTp/AITJVYmNnyDX+dHmGhhZWj4AkNC6OysLGyMFrCdBNi5M6sypwKS+3bvoeHtGyBJkiRJtpZOw7WvgavF62fgqcUmui0WBYbAJfMvoAOcAgfAJHojLQQMgfMfPu/RQEK0gGXlC+ESIgWsKl8IlRAlYN3yhTAJEQI2LV8IkeAtoLZ8wV2CpwBr+YKrBC8BqvIFNwkeAtTlCy4S1AK8yhfkEpQCvMsXpBJUAqLKF2QSFAKiyxckEqwCWpUvmCVYBNwAF4a8ih6wB0xrwjuGhQeGrJoBcFQTtAj4bezXhCwCZoasmhnwWhO0nAl2gTPg0HANBe/AC/DZeB9JkiRJkvwxtv6H0K5h4Vugb8grmQF3wNemQcu9QN+QVdMHjmuC/+lu8KMmZBEwMmTVjIC3mqDlRGjK/DiqZ7iGgjHwUBu2nglOaCthDNxbLqA4FW4lwVwedM8FoiVIyoP2yVCUBFl50D8b9JYgLQ8+T4e9JMjLg998gFqCS3nwnRBRSXArD/4zQlYJruUhZkqsVoJ7eYibE9xUQkh5iJ0UXVdCWHmInxVeJSG0PLSZFl8mIbw8tPu/wGSx9sni/TPw2GgvSZIkSbKtfANxTVKVOblB2wAAAABJRU5ErkJggg==" />
+                                    }
+                                }
+                            </div>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
+                    <ItemContent>
+                        <!-- here we set the row click event handler and the pass current row item as parameter -->
+                        <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
+                            style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
+                            @foreach (DataTableColumn<TModel> column in visibleColumns)
+                            {
+                                if (column.RowTemplate != null)
+                                {
+                                    <td>@column.RowTemplate(item)</td>
+                                }
+                                else if (column.ChildContent != null)
+                                {
+                                    <td>@column.ChildContent</td>
+                                }
+                                else if (column.Property != null)
+                                {
+                                    var expression = column.Property.Compile();
+                                    var result = expression.DynamicInvoke(item);
+                                    <td>@result</td>
+                                }
+                            }
+                        </tr>
+                    </ItemContent>
+                    <Placeholder>
+                        @VirtualizePlaceholder                        
+                    </Placeholder>
+                </Virtualize>
+            </tbody>
+        </table>
+    </div>
+
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> Items { get; set; }
+    [Parameter] public Action<string, SortDirection>? SortChanged { get; set; }
+    [Parameter] public EventCallback<TModel> RowClickedEvent { get; set; }
+
+    [Parameter] public string ContainerCssClass { get; set; } = "table-responsive";
+    [Parameter] public Dictionary<string, object>? ContainerAttributes { get; set; }
+
+    [Parameter] public string CssClass { get; set; } = "table";
+    [Parameter] public TableStyle Styles { get; set; }
+    [Parameter] public Dictionary<string, object>? TableAttributes { get; set; }
+
+    [Parameter] public bool AllowRowSelection { get; set; } = false;
+    [Parameter] public TModel? SelectedItem { get; set; }
+    [Parameter] public string SelectedItemCssClass { get; set; } = "bg-info";
+    [Parameter] public Dictionary<string, object>? RowAttributes { get; set; }
+
+    [Parameter] public RenderFragment? VirtualizePlaceholder { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private Virtualize<TModel> asyncVirtualize;        // can be used to force table update if required by calling asyncVirtualize.RefreshDataAsync()
+
+    private Guid? SortColumnGuid { get; set; }
+    private SortDirection SortDirection { get; set; } = SortDirection.Ascending;
+    private string? SortColumn { get; set; }
+
+    /// <summary>
+    /// Returns the default sort column.
+    /// </summary>
+    public string DefaultSortColumn
+    {
+        get
+        {
+            return Columns
+                .Where(c => c.IsDefaultSortColumn)
+                .Select(c => c.GetColumnPropertyName())
+                .FirstOrDefault();
+        }
+    }
+
+    /// <summary>
+    /// Returns the default sort direction.
+    /// </summary>
+    public SortDirection DefaultSortDirection
+    {
+        get
+        {
+            return Columns
+                .Where(c => c.IsDefaultSortColumn)
+                .Select(c => c.DefaultSortDirection)
+                .FirstOrDefault();
+        }
+    }
+
+    private IList<DataTableColumn<TModel>> Columns { get; set; } = new List<DataTableColumn<TModel>>();
+
+    private string GetTableStyleCssClasses()
+    {
+        StringBuilder classes = new StringBuilder();
+
+        Styles.ToString().Split(',').Where(e => !string.IsNullOrEmpty(e.ToLower())).ToList().ForEach(e => classes.Append($"table-{e.Trim().ToLower()} "));
+
+        return classes.ToString();
+    }
+
+    /// <summary>
+    /// Adds a column to the collection.
+    /// </summary>
+    /// <param name="column"></param>
+    public void AddColumn(DataTableColumn<TModel> column)
+    {
+        Columns.Add(column);
+
+        if (column.IsDefaultSortColumn)
+        {
+            SortColumnGuid = column.Guid;
+            SortDirection = column.DefaultSortDirection;
+            SortColumn = column.GetColumnVisualPropertyName();
+
+            SortChanged(SortColumn, SortDirection);
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Sets event handlers for all the columns to trigger on StateChanged.
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Run(() =>
+            {
+                foreach (DataTableColumn<TModel> column in Columns)
+                    column.StateChanged += ColumnStateChanged;
+            });
+        }
+    }
+
+    /// <summary>
+    /// Does clean up event handlers and columns collection.
+    /// </summary>
+    public void Dispose()
+    {
+        foreach (DataTableColumn<TModel> column in Columns)
+            column.StateChanged -= ColumnStateChanged;
+        Columns.Clear();
+    }
+
+    /// <summary>
+    /// Does callback the user defined method to load items.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    protected async ValueTask<ItemsProviderResult<TModel>> LoadItems(ItemsProviderRequest request)
+    {
+        return await Items(request);
+    }
+
+    /// <summary>
+    /// Does force a data refresh.
+    /// </summary>
+    /// <returns></returns>
+    public async Task Refresh()
+    {
+        await asyncVirtualize.RefreshDataAsync();
+    }
+
+    /// <summary>
+    /// Does Callback Action with new sort column and direction and force a data refresh.
+    /// </summary>
+    /// <param name="SortColumn"></param>
+    /// <param name="SortDirection"></param>
+    /// <returns></returns>
+    protected async Task SortUpdate(string SortColumn, SortDirection SortDirection)
+    {
+        SortChanged(SortColumn, SortDirection);
+        await Refresh();
+    }
+
+    /// <summary>
+    /// Does a callback on RowClickedEvent.
+    /// </summary>
+    /// <param name="args"></param>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    private async Task OnRowClickedEvent(MouseEventArgs args, TModel item)
+    {
+        SelectedItem = (SelectedItem?.Equals(item) ?? false) ? default(TModel) : item;
+        await RowClickedEvent.InvokeAsync(item);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Event handler for when certain important properties of the column change
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void ColumnStateChanged(Object? sender, EventArgs args) => StateHasChanged();
+
+    private async Task OnColumnHeaderClickedEvent(MouseEventArgs clickEvent, DataTableColumn<TModel> column)
+    {
+        if (!column.IsSortable) return;
+
+        // It is the column currently sorted on, so all we do is change the SortDirection
+        if (column.Guid == SortColumnGuid)
+        {
+            if (SortDirection == SortDirection.Ascending) SortDirection = SortDirection.Descending;
+            else SortDirection = SortDirection.Ascending;
+        }
+        // It is a different column, so all we do is change the SortColumn
+        else
+        {
+            SortColumnGuid = column.Guid;
+            SortColumn = column.GetColumnPropertyName();
+        }
+        // start the sorting
+        await SortUpdate(SortColumn, SortDirection);
+    }
+} 

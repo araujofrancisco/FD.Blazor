@@ -1,0 +1,36 @@
+﻿@page "/TableStyling"
+
+@using FD.Blazor.Examples.Data
+
+@inject WeatherForecastService ForecastService
+
+<DataTable TModel="WeatherForecast" Items="LoadForecasts"
+           ContainerCssClass="d-flex justify-center align-center"
+           ContainerAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
+           Styles=@(TableStyle.Striped | TableStyle.Hover)
+           TableAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
+           AllowRowSelection="true"
+           VirtualizePlaceholder=@((e) => e.AddMarkupContent(1, "<p><em>Loading...</em></p>"))>
+    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Date.ToShortDateString()" />
+    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
+    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
+    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Summary" />
+</DataTable>
+
+
+@code {
+
+
+    /// <summary>
+    /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
+    {
+        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
+        // simulates load time, this will allow us to verify virtualize placeholder is working
+        await Task.Run(() => Task.Delay(1000));
+        return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
+    }
+}

@@ -1,0 +1,32 @@
+﻿@page "/sorting"
+
+@using FD.Blazor.Examples.Data
+
+@inject WeatherForecastService ForecastService
+
+<DataTable TModel="WeatherForecast" Items="LoadForecasts" SortChanged="(c, d) => { this.SortColumn = c; this.SortDirection = d; }">
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Date.ToShortDateString()" 
+                     IsDefaultSortColumn="true" DefaultSortDirection="SortDirection.Descending" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Summary" />
+</DataTable>
+
+
+@code {
+
+    private string SortColumn { get; set; }
+    private SortDirection SortDirection { get; set; }
+
+    /// <summary>
+    /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
+    {
+        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
+        if (SortColumn != null) fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumn).ToArray() : fc.OrderByDescending(SortColumn).ToArray();
+        return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
+    }
+}

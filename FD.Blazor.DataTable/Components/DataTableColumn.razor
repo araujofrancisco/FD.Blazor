@@ -1,0 +1,79 @@
+﻿@using System.Linq.Expressions;
+
+@typeparam TModel
+
+@code {
+    [CascadingParameter] private DataTable<TModel>? DataTable { get; set; }
+    [Parameter] public bool IsSortable { get; set; } = false;
+    [Parameter] public string? CustomTitle { get; set; }
+    [Parameter] public bool IsDefaultSortColumn { get; set; } = false;
+    [Parameter] public Expression<Func<TModel, object>>? Property { get; set; }
+    [Parameter] public SortDirection DefaultSortDirection { get; set; } = SortDirection.Ascending;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Template with the param being the name of the column
+    /// </summary>
+    [Parameter] public RenderFragment<string>? HeaderTemplate { get; set; }
+
+    [Parameter] public RenderFragment<TModel>? RowTemplate { get; set; }
+
+    /// <summary>
+    /// Indicates whether or not the column is visible
+    /// </summary>
+    [Parameter]
+    public bool IsVisible
+    {
+        get => isVisible;
+        set
+        {
+            if (isVisible != value)
+            {
+                isVisible = value;
+                RaiseStateChanged();
+            }
+        }
+    }
+    private bool isVisible = true;
+
+    public Guid Guid { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        if (DataTable == null) throw new ArgumentNullException($"A 'DataTableColumn' must be a child of a 'DataTable' component");
+
+        Guid = Guid.NewGuid();
+        DataTable.AddColumn(this);
+
+        return Task.CompletedTask;
+    }
+
+    public string GetColumnPropertyName()
+    {
+        if (Property != null) return Utils.GetPropertyName<TModel>(Property);
+        return "";
+    }
+
+    public string GetColumnVisualPropertyName()
+    {
+        if (Property != null)
+        {
+            string fullColumnName = GetColumnPropertyName();
+            string propertyName = Utils.GetPropertyName<TModel>(Property);
+
+            var parts = propertyName.Split('.');
+            if (parts.Length > 0) return parts.Last();
+        }
+
+        return "";
+    }
+
+    public event EventHandler? StateChanged;
+    private void RaiseStateChanged()
+    {
+        EventHandler? handler = StateChanged;
+        handler?.Invoke(this, new EventArgs());
+    }
+
+}
