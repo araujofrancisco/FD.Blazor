@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/FD.Blazor.Core/push_nuget.bat
+/FD.Blazor.DataTable/push_nuget.bat
