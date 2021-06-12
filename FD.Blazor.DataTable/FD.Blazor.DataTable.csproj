@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Francisco Araujo</Authors>
     <Description>Blazor DataTable component, implemented using virtualization.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/FD.Blazor.DataTable</PackageProjectUrl>
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -15,6 +15,9 @@
       - Initial release
     </PackageReleaseNotes>
     <RootNamespace>FD.Blazor</RootNamespace>
+    <PackageId>FreelanceDevelopers.Blazor.DataTable</PackageId>
+    <Company>Francisco Araujo</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +27,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FD.Blazor.Core\FD.Blazor.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
