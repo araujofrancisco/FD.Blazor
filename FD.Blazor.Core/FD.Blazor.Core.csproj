@@ -6,7 +6,7 @@
     <Authors>Francisco Araujo</Authors>
     <Description>Library including some code functions and extensions to use on FD.Blazor Components.</Description>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/FD.Blazor.Core</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/tree/main/FD.Blazor.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, linq, sorting, extension</PackageTags>

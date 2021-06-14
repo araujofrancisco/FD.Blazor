@@ -7,7 +7,7 @@
     <Authors>Francisco Araujo</Authors>
     <Description>Blazor DataTable component, implemented using virtualization.</Description>
     <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/FD.Blazor.DataTable</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/tree/main/FD.Blazor.DataTable</PackageProjectUrl>
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, boostrap, boostrap4, grid, table, datatable, sorting, virtualization, virtual, component</PackageTags>
