@@ -4,33 +4,51 @@
 
 @inject WeatherForecastService ForecastService
 
-<DataTable TModel="WeatherForecast" Items="LoadForecasts"
-           ContainerCssClass="d-flex justify-center align-center"
-           ContainerAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
-           Styles=@(TableStyle.Striped | TableStyle.Hover)
-           TableAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
-           AllowRowSelection="true"
-           VirtualizePlaceholder=@((e) => e.AddMarkupContent(1, "<p><em>Loading...</em></p>"))>
-    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Date.ToShortDateString()" />
-    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
-    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
-    <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Summary" />
-</DataTable>
+<EditForm EditContext="@editContext">
+    <DataTable TModel="WeatherForecast" Items="LoadForecasts"
+               ContainerCssClass="d-flex justify-center align-center"
+               ContainerAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
+               Styles=@(TableStyle.Striped | TableStyle.Hover)
+               TableAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
+               AllowRowSelection="true"
+               VirtualizePlaceholder=@((e) => e.AddMarkupContent(1, "<p><em>Loading...</em></p>"))>
 
+        <DataTableColumn TModel="WeatherForecast" CustomTitle="Selected" TextAlignment="TextAlignment.Center">
+            <HeaderTemplate Context="title">
+                <button class="btn btn-outline-dark btn-sm" data-toggle="tooltip" title="Toggle check for all the items">
+                    Select
+                </button>
+            </HeaderTemplate>
+            <RowTemplate Context="item">
+                <InputCheckbox class="custom-control-lg" @bind-Value="@item.Selected"></InputCheckbox>
+            </RowTemplate>
+        </DataTableColumn>
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Date.ToShortDateString()" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Summary" />
+    </DataTable>
+</EditForm>
 
-@code {
+    @code {
 
+        private EditContext editContext;
 
-    /// <summary>
-    /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
-    /// </summary>
-    /// <param name="request"></param>
-    /// <returns></returns>
-    protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
-    {
-        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
-        // simulates load time, this will allow us to verify virtualize placeholder is working
-        await Task.Run(() => Task.Delay(1000));
-        return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
+        protected override async Task OnInitializedAsync()
+        {
+            editContext = new EditContext(new WeatherForecast[0]);
+        }
+
+        /// <summary>
+        /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
+        {
+            var fc = await ForecastService.GetForecastAsync(DateTime.Now);
+            // simulates load time, this will allow us to verify virtualize placeholder is working
+            await Task.Run(() => Task.Delay(1000));
+            return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
+        }
     }
-}
