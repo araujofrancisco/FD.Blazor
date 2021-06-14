@@ -13,7 +13,7 @@
                 <tr>
                     @foreach (DataTableColumn<TModel> column in visibleColumns)
                     {
-                        <th id=@column.Guid.ToString()>
+                        <th id=@column.Guid.ToString() style="@column.GetColumnRowDataStyle()">
 
                             @if (column.HeaderTemplate != null)
                             {
@@ -60,20 +60,18 @@
                             style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
                             @foreach (DataTableColumn<TModel> column in visibleColumns)
                             {
-                                if (column.RowTemplate != null)
-                                {
-                                    <td>@column.RowTemplate(item)</td>
-                                }
-                                else if (column.ChildContent != null)
-                                {
-                                    <td>@column.ChildContent</td>
-                                }
-                                else if (column.Property != null)
-                                {
-                                    var expression = column.Property.Compile();
-                                    var result = expression.DynamicInvoke(item);
-                                    <td>@result</td>
-                                }
+                                <td style="@column.GetColumnRowDataStyle()">
+                                    @if (column.RowTemplate != null)
+                                        @column.RowTemplate(item)
+                                    else if (column.ChildContent != null)                            
+                                        @column.ChildContent
+                                    else if (column.Property != null)
+                                    {
+                                        var expression = column.Property.Compile();
+                                        var result = expression.DynamicInvoke(item);                                
+                                        @result
+                                    }
+                                </td>
                             }
                         </tr>
                     </ItemContent>
