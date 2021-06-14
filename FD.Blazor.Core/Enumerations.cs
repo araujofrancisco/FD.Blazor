@@ -19,4 +19,21 @@ namespace FD.Blazor.Core
         Descending = 2,
         None = 0
     }
+
+    public enum TextAlignment
+    {
+        Left = 0,
+        Center = 1,
+        Right = 2,
+        End = 3,
+        Start = 4
+    }
+
+    public enum VerticalAlignment
+    {
+        Bottom = 0,
+        Baseline = 1,
+        Middle = 2,
+        Top = 3
+    }
 }
