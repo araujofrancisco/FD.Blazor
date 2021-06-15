@@ -11,12 +11,12 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, boostrap, boostrap4, grid, table, datatable, sorting, virtualization, virtual, component</PackageTags>
-    <PackageReleaseNotes>Forced UI update on datatable Refresh to fix issues when filtering data.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added property to allow hiding placeholder on virtualize component to avoid issues when rows are not fixed height.</PackageReleaseNotes>
     <RootNamespace>FD.Blazor</RootNamespace>
     <PackageId>FreelanceDevelopers.Blazor.DataTable</PackageId>
     <Company>Francisco Araujo</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
