@@ -215,6 +215,7 @@
     public async Task Refresh()
     {
         await asyncVirtualize.RefreshDataAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
