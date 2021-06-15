@@ -53,32 +53,62 @@
                 </tr>
             </thead>
             <tbody>
-                <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
-                    <ItemContent>
-                        <!-- here we set the row click event handler and the pass current row item as parameter -->
-                        <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
-                            style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
-                            @foreach (DataTableColumn<TModel> column in visibleColumns)
-                            {
-                                <td style="@column.GetColumnRowDataStyle()">
-                                    @if (column.RowTemplate != null)
-                                        @column.RowTemplate(item)
-                                    else if (column.ChildContent != null)                            
-                                        @column.ChildContent
-                                    else if (column.Property != null)
-                                    {
-                                        var expression = column.Property.Compile();
-                                        var result = expression.DynamicInvoke(item);                                
-                                        @result
-                                    }
-                                </td>
-                            }
-                        </tr>
-                    </ItemContent>
-                    <Placeholder>
-                        @VirtualizePlaceholder                        
-                    </Placeholder>
-                </Virtualize>
+                @* TODO: improve this, probably need to create a wrapper on virtualize to avoid duplicate code and keep itemcontent here *@
+                @if (!HideVirtualizePlaceholder)
+                {
+                    <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
+                        <ItemContent>
+                            <!-- here we set the row click event handler and the pass current row item as parameter -->
+                            <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
+                                style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
+                                @foreach (DataTableColumn<TModel> column in visibleColumns)
+                                {
+                                    <td style="@column.GetColumnRowDataStyle()">
+                                        @if (column.RowTemplate != null)
+                                            @column.RowTemplate(item)
+                                            else if (column.ChildContent != null)
+                                                @column.ChildContent
+                                                else if (column.Property != null)
+                                                {
+                                                    var expression = column.Property.Compile();
+                                                    var result = expression.DynamicInvoke(item);
+                                                    @result
+                                                }
+                                    </td>
+                                }
+                            </tr>
+                        </ItemContent>
+                        <Placeholder>
+                            @VirtualizePlaceholder
+                        </Placeholder>
+                    </Virtualize>
+                }
+                else
+                {
+                    <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
+                        <ItemContent>
+                            <!-- here we set the row click event handler and the pass current row item as parameter -->
+                            <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
+                                style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
+                                @foreach (DataTableColumn<TModel> column in visibleColumns)
+                                {
+                                    <td style="@column.GetColumnRowDataStyle()">
+                                        @if (column.RowTemplate != null)
+                                            @column.RowTemplate(item)
+                                            else if (column.ChildContent != null)
+                                                @column.ChildContent
+                                                else if (column.Property != null)
+                                                {
+                                                    var expression = column.Property.Compile();
+                                                    var result = expression.DynamicInvoke(item);
+                                                    @result
+                                                }
+                                    </td>
+                                }
+                            </tr>
+                        </ItemContent>
+                    </Virtualize>
+                }
             </tbody>
         </table>
     </div>
@@ -102,6 +132,7 @@
     [Parameter] public TModel? SelectedItem { get; set; }
     [Parameter] public string SelectedItemCssClass { get; set; } = "bg-info";
     [Parameter] public Dictionary<string, object>? RowAttributes { get; set; }
+    [Parameter] public bool HideVirtualizePlaceholder { get; set; } = false;
 
     [Parameter] public RenderFragment? VirtualizePlaceholder { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }

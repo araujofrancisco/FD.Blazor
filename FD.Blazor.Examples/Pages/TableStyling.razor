@@ -11,7 +11,7 @@
                Styles=@(TableStyle.Striped | TableStyle.Hover)
                TableAttributes=@(new Dictionary<string, object>() { { "style", "width: 100%;" } })
                AllowRowSelection="true"
-               VirtualizePlaceholder=@((e) => e.AddMarkupContent(1, "<p><em>Loading...</em></p>"))>
+               HideVirtualizePlaceholder="false" VirtualizePlaceholder=@((e) => e.AddMarkupContent(1, "<p><em>Loading...</em></p>"))>
 
         <DataTableColumn TModel="WeatherForecast" CustomTitle="Selected" TextAlignment="TextAlignment.Center">
             <HeaderTemplate Context="title">
