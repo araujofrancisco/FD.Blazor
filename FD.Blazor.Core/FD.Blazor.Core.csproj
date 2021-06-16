@@ -10,10 +10,10 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, linq, sorting, extension</PackageTags>
-    <PackageReleaseNotes>Implemented recursively method GetPropertyName and included new cases.</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed implementation for GetPropertyName to handle method calls with multiple parameters.</PackageReleaseNotes>
     <PackageId>FreelanceDevelopers.Blazor.Core</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
