@@ -6,28 +6,52 @@ namespace FD.Blazor.Core
 {
     public static class Utils
     {
+
         /// <summary>
         /// Obtains the property name used on an expression.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static string GetPropertyName<T>(this Expression<Func<T, object>> expression) =>
-            expression.Body switch
+        public static string GetPropertyName<T>(this Expression<Func<T, object>> expression)
+        {
+            string nameSelector(Expression e)
             {
-                MemberExpression m =>
-                    m.Member.Name,
-                UnaryExpression u when u.Operand is MemberExpression m =>
-                    m.Member.Name,
-                MethodCallExpression c when c.Arguments.Count > 0 =>
-                    ((MemberExpression)c.Arguments[0]).Member.Name,
-                MethodCallExpression o when o.Object is MemberExpression m =>
-                    m.Member.Name,
-                ConditionalExpression i when i.Test is MemberExpression m =>
-                                    ((MemberExpression)m.Expression).Member.Name,
-                _ =>
-                    throw new NotImplementedException(expression.GetType().ToString())
-            };
+                switch (e.NodeType)
+                {
+                    case ExpressionType.Parameter:
+                        return ((ParameterExpression)e).Name;
+
+                    case ExpressionType.MemberAccess:
+                        return ((MemberExpression)e).Member.Name;
+
+                    case ExpressionType.Call:
+                        if (((MethodCallExpression)e).Arguments.Count > 0)
+                            return nameSelector(((MethodCallExpression)e).Arguments[0]);
+                        if (((MethodCallExpression)e).Object is MemberExpression expression1)
+                            return expression1.Member.Name;
+                        return ((MethodCallExpression)e).Method.Name;
+
+                    case ExpressionType.Conditional:
+                        return nameSelector(((MemberExpression)(((ConditionalExpression)e).Test)).Expression);
+
+                    case ExpressionType.Convert:
+                    case ExpressionType.ConvertChecked:
+                        return nameSelector(((UnaryExpression)e).Operand);
+
+                    case ExpressionType.Invoke:
+                        return nameSelector(((InvocationExpression)e).Expression);
+                    
+                    case ExpressionType.ArrayLength:
+                        return "Length";
+
+                    default:
+                        throw new NotImplementedException(expression.GetType().ToString());
+                }
+            }
+
+            return nameSelector(expression.Body);
+        }
 
         /// <summary>
         /// Returns an Expression for a given property name on a specified type.
