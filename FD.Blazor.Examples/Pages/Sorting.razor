@@ -1,15 +1,24 @@
 ﻿@page "/sorting"
 
 @using FD.Blazor.Examples.Data
+@using System.Text.RegularExpressions
 
 @inject WeatherForecastService ForecastService
 
+@{
+    string pattern = @"([(])?([+])?(\d{1})(\d{3})(\d{3})(\d{4})([)])?";
+    string repl = @"+$3 ($4) $5-$6";
+}
+
 <DataTable TModel="WeatherForecast" Items="LoadForecasts" SortChanged="(c, d) => { this.SortColumn = c; this.SortDirection = d; }">
-    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Date.ToShortDateString()" 
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Date.ToShortDateString()"
                      IsDefaultSortColumn="true" DefaultSortDirection="SortDirection.Descending" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Summary" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property=@((e) => TimeSpan.FromSeconds(e.DaylightTime).DurationToString()) CustomTitle="Daylight Time" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" />
 </DataTable>
 
 

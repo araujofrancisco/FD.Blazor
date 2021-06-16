@@ -1,8 +1,14 @@
 ﻿@page "/TableStyling"
 
 @using FD.Blazor.Examples.Data
+@using System.Text.RegularExpressions
 
 @inject WeatherForecastService ForecastService
+
+@{
+    string pattern = @"([(])?([+])?(\d{1})(\d{3})(\d{3})(\d{4})([)])?";
+    string repl = @"+$3 ($4) $5-$6";
+}
 
 <EditForm EditContext="@editContext">
     <DataTable TModel="WeatherForecast" Items="LoadForecasts"
@@ -27,28 +33,31 @@
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Summary" />
+        <DataTableColumn TModel="WeatherForecast" Property=@((e) => TimeSpan.FromSeconds(e.DaylightTime).DurationToString()) CustomTitle="Daylight Time" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" />
     </DataTable>
 </EditForm>
 
-    @code {
+@code {
 
-        private EditContext editContext;
+    private EditContext editContext;
 
-        protected override async Task OnInitializedAsync()
-        {
-            editContext = new EditContext(new WeatherForecast[0]);
-        }
-
-        /// <summary>
-        /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
-        {
-            var fc = await ForecastService.GetForecastAsync(DateTime.Now);
-            // simulates load time, this will allow us to verify virtualize placeholder is working
-            await Task.Run(() => Task.Delay(1000));
-            return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        editContext = new EditContext(new WeatherForecast[0]);
     }
+
+    /// <summary>
+    /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
+    {
+        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
+        // simulates load time, this will allow us to verify virtualize placeholder is working
+        await Task.Run(() => Task.Delay(1000));
+        return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
+    }
+}
