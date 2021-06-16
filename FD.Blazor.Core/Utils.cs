@@ -27,7 +27,7 @@ namespace FD.Blazor.Core
 
                     case ExpressionType.Call:
                         if (((MethodCallExpression)e).Arguments.Count > 0)
-                            return nameSelector(((MethodCallExpression)e).Arguments[0]);
+                            return nameSelector(((MethodCallExpression)e).Arguments.FirstOrDefault(m => m.NodeType != ExpressionType.Constant));
                         if (((MethodCallExpression)e).Object is MemberExpression expression1)
                             return expression1.Member.Name;
                         return ((MethodCallExpression)e).Method.Name;
