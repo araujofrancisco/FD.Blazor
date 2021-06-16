@@ -53,62 +53,29 @@
                 </tr>
             </thead>
             <tbody>
-                @* TODO: improve this, probably need to create a wrapper on virtualize to avoid duplicate code and keep itemcontent here *@
-                @if (!HideVirtualizePlaceholder)
-                {
-                    <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
-                        <ItemContent>
-                            <!-- here we set the row click event handler and the pass current row item as parameter -->
-                            <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
-                                style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
-                                @foreach (DataTableColumn<TModel> column in visibleColumns)
-                                {
-                                    <td style="@column.GetColumnRowDataStyle()">
-                                        @if (column.RowTemplate != null)
-                                            @column.RowTemplate(item)
-                                            else if (column.ChildContent != null)
-                                                @column.ChildContent
-                                                else if (column.Property != null)
-                                                {
-                                                    var expression = column.Property.Compile();
-                                                    var result = expression.DynamicInvoke(item);
-                                                    @result
-                                                }
-                                    </td>
-                                }
-                            </tr>
-                        </ItemContent>
-                        <Placeholder>
-                            @VirtualizePlaceholder
-                        </Placeholder>
-                    </Virtualize>
-                }
-                else
-                {
-                    <Virtualize @ref="asyncVirtualize" ItemsProvider="LoadItems" Context="item" ItemSize="50">
-                        <ItemContent>
-                            <!-- here we set the row click event handler and the pass current row item as parameter -->
-                            <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
-                                style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
-                                @foreach (DataTableColumn<TModel> column in visibleColumns)
-                                {
-                                    <td style="@column.GetColumnRowDataStyle()">
-                                        @if (column.RowTemplate != null)
-                                            @column.RowTemplate(item)
-                                            else if (column.ChildContent != null)
-                                                @column.ChildContent
-                                                else if (column.Property != null)
-                                                {
-                                                    var expression = column.Property.Compile();
-                                                    var result = expression.DynamicInvoke(item);
-                                                    @result
-                                                }
-                                    </td>
-                                }
-                            </tr>
-                        </ItemContent>
-                    </Virtualize>
-                }
+                <VirtualizeData @ref="asyncVirtualize" TModel="TModel">
+                    <ItemContent Context="item">
+                        <!-- here we set the row click event handler and the pass current row item as parameter -->
+                        <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
+                            style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
+                            @foreach (DataTableColumn<TModel> column in visibleColumns)
+                            {
+                                <td style="@column.GetColumnRowDataStyle()">
+                                    @if (column.RowTemplate != null)
+                                        @column.RowTemplate(item)
+                                        else if (column.ChildContent != null)
+                                            @column.ChildContent
+                                            else if (column.Property != null)
+                                            {
+                                                var expression = column.Property.Compile();
+                                                var result = expression.DynamicInvoke(item);
+                                                @result
+                                            }
+                                </td>
+                            }
+                        </tr>
+                    </ItemContent>
+                </VirtualizeData>
             </tbody>
         </table>
     </div>
@@ -137,7 +104,8 @@
     [Parameter] public RenderFragment? VirtualizePlaceholder { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    private Virtualize<TModel> asyncVirtualize;        // can be used to force table update if required by calling asyncVirtualize.RefreshDataAsync()
+    //private Virtualize<TModel> asyncVirtualize;        // can be used to force table update if required by calling asyncVirtualize.RefreshDataAsync()
+    private VirtualizeData<TModel> asyncVirtualize;        // can be used to force table update if required by calling asyncVirtualize.RefreshDataAsync()
 
     private Guid? SortColumnGuid { get; set; }
     private SortDirection SortDirection { get; set; } = SortDirection.Ascending;

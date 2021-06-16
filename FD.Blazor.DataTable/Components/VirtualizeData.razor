@@ -1,0 +1,51 @@
+﻿@typeparam TModel
+
+<CascadingValue Value="this">
+    @if (DataTable.HideVirtualizePlaceholder)
+    {
+        <Virtualize @ref="asyncVirtualize" ItemsProvider="ItemsProvider" ItemSize="50">
+            @ItemContent
+        </Virtualize>
+    }
+    else
+    {
+        @*<Virtualize @ref="asyncVirtualize" ItemsProvider="ItemsProvider" ItemSize="50">
+            @ItemContent
+            <Placeholder>
+                @DataTable.VirtualizePlaceholder
+            </Placeholder>
+        </Virtualize>*@
+    }
+    @ChildContent
+</CascadingValue>
+
+
+@code {
+    [CascadingParameter] private DataTable<TModel>? DataTable { get; set; }
+
+    //[Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> Items { get; set; }
+    [Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> ItemsProvider { get; set; }
+
+    [Parameter] public string Context { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment<TModel>? ItemContent { get; set; }
+    [Parameter] public RenderFragment? Placeholder { get; set; }
+
+    private Virtualize<TModel> asyncVirtualize;        // can be used to force table update if required by calling asyncVirtualize.RefreshDataAsync()
+
+    ///// <summary>
+    ///// Does callback the user defined method to load items.
+    ///// </summary>
+    ///// <param name="request"></param>
+    ///// <returns></returns>
+    //protected async ValueTask<ItemsProviderResult<TModel>> LoadItems(ItemsProviderRequest request)
+    //{
+    //    return await Items(request);
+    //}
+
+    public async Task RefreshDataAsync()
+    {
+        await asyncVirtualize.RefreshDataAsync();
+    }
+}
