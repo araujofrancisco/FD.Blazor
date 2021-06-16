@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +23,8 @@ namespace FD.Blazor.Examples.Data
                 Summary = Summaries[rng.Next(Summaries.Length)],
                 DaylightTime = rng.Next(6, 14*60*60),
                 Phone = $"+{rng.Next(1, 9)}{rng.Next(100, 999)}{rng.Next(100, 999)}{rng.Next(1000, 9999)}",
-                WhenUpdated = rng.Next(0, 100) < 30 ? null : DateTime.Now
+                WhenUpdated = rng.Next(0, 100) < 30 ? null : DateTime.Now,
+                ReportTypes = new List<ReportType>() { (ReportType)rng.Next(0, 3) }
             }).ToArray());
         }
     }

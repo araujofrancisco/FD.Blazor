@@ -1,7 +1,16 @@
 using System;
+using System.Collections.Generic;
 
 namespace FD.Blazor.Examples.Data
 {
+    public enum ReportType
+    {
+        Express,
+        Daily,
+        Weekly,
+        None
+    }
+
     public class WeatherForecast
     {
         public DateTime Date { get; set; }
@@ -12,5 +21,6 @@ namespace FD.Blazor.Examples.Data
         public int DaylightTime { get; set; }
         public string Phone { get; set; }
         public DateTime? WhenUpdated { get; set; }
+        public IEnumerable<ReportType> ReportTypes { get; set; }
     }
 }
