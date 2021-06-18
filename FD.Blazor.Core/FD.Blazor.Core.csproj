@@ -9,11 +9,11 @@
     <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/tree/main/FD.Blazor.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>blazor, linq, sorting, extension</PackageTags>
-    <PackageReleaseNotes>Changed implementation for GetPropertyName to handle method calls with multiple parameters.</PackageReleaseNotes>
+    <PackageTags>blazor, linq, sorting, filtering, extension</PackageTags>
+    <PackageReleaseNotes>Marked as Obsolete And Method. Use Operation method instead.</PackageReleaseNotes>
     <PackageId>FreelanceDevelopers.Blazor.Core</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
