@@ -4,17 +4,21 @@
     @if (DataTable.HideVirtualizePlaceholder)
     {
         <Virtualize @ref="asyncVirtualize" ItemsProvider="ItemsProvider" ItemSize="50">
-            @ItemContent
+            <ItemContent>
+                @ItemContent
+            </ItemContent>
         </Virtualize>
     }
     else
     {
-        @*<Virtualize @ref="asyncVirtualize" ItemsProvider="ItemsProvider" ItemSize="50">
-            @ItemContent
+        <Virtualize @ref="asyncVirtualize" ItemsProvider="ItemsProvider" ItemSize="50">
+            <ItemContent>
+                @ItemContent
+            </ItemContent>
             <Placeholder>
                 @DataTable.VirtualizePlaceholder
             </Placeholder>
-        </Virtualize>*@
+        </Virtualize>
     }
     @ChildContent
 </CascadingValue>
@@ -24,7 +28,8 @@
     [CascadingParameter] private DataTable<TModel>? DataTable { get; set; }
 
     //[Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> Items { get; set; }
-    [Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> ItemsProvider { get; set; }
+    //[Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> ItemsProvider { get; set; }
+    [Parameter] public ItemsProviderDelegate<TModel> ItemsProvider { get; set; }
 
     [Parameter] public string Context { get; set; }
 

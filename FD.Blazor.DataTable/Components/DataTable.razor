@@ -53,7 +53,7 @@
                 </tr>
             </thead>
             <tbody>
-                <VirtualizeData @ref="asyncVirtualize" TModel="TModel">
+                <VirtualizeData @ref="asyncVirtualize" TModel="TModel" ItemsProvider="LoadItems">
                     <ItemContent Context="item">
                         <!-- here we set the row click event handler and the pass current row item as parameter -->
                         <tr id="@item.GetHashCode()" class='@(AllowRowSelection && item.Equals(SelectedItem) ? SelectedItemCssClass : "")'
