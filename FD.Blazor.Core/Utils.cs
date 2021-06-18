@@ -85,10 +85,54 @@ namespace FD.Blazor.Core
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
+        [Obsolete("And method is deprecated, please use Operation method instead.", true)]
         public static Expression<Func<T, bool>> And<T>(Expression<Func<T, bool>> left, Expression<Func<T, bool>> right)
         {
             var invokedExpr = Expression.Invoke(right, left.Parameters.Cast<Expression>());
             return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(left.Body, invokedExpr), left.Parameters);
         }
+
+        /// <summary>
+        /// Does creates a BinaryExpression that represents an ExpressionType with the two provided expressions.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        private static Expression<Func<T, bool>> Operation<T>(Expression<Func<T, bool>> left, Expression<Func<T, bool>> right, ExpressionType type)
+        {
+            var invokedExpr = Expression.Invoke(right, left.Parameters.Cast<Expression>());
+            return Expression.Lambda<Func<T, bool>>(type switch {
+                ExpressionType.And =>
+                    Expression.And(left.Body, invokedExpr),
+                ExpressionType.AndAlso =>
+                    Expression.AndAlso(left.Body, invokedExpr),
+                ExpressionType.Or =>
+                    Expression.Or(left.Body, invokedExpr),
+                ExpressionType.OrElse =>
+                    Expression.OrElse(left.Body, invokedExpr),
+                _ =>
+                    throw new NotImplementedException(type.GetType().ToString())
+            }, 
+            left.Parameters);
+        }
+
+        /// <summary>
+        /// Does an operation between two conditions checking for nulls, in case one of them is null returns the other one.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="condition1"></param>
+        /// <param name="condition2"></param>
+        /// <returns></returns>
+        public static Expression<Func<T, bool>> Operation<T>(Expression<Func<T, bool>> left, Expression<Func<T, bool>> right, ExpressionType type, bool ignoreNull = true) =>
+            ignoreNull switch
+            {
+                true =>
+                    // if condition1 is null returns condition2, if condition1 is valid but condition2 is null returns condition1, otherwise
+                    // does an operation between the 2 expressions
+                    left == null ? right : right == null ? left : Utils.Operation<T>(left, right, type),
+                false =>
+                    Utils.Operation<T>(left, right, type)
+            };            
     }
 }
