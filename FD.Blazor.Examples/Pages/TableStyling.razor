@@ -35,7 +35,8 @@
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Summary" />
         <DataTableColumn TModel="WeatherForecast" Property=@((e) => TimeSpan.FromSeconds(e.DaylightTime).DurationToString()) CustomTitle="Daylight Time" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
-        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" />
+        <DataTableColumn TModel="WeatherForecast" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" 
+                         ColumnStyle=ColumnStyle.Data Style="font-weight: 400;color: orangered;"/>
     </DataTable>
 </EditForm>
 
