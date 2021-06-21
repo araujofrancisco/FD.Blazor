@@ -36,4 +36,11 @@ namespace FD.Blazor.Core
         Middle = 2,
         Top = 3
     }
+
+    public enum ColumnStyle
+    {
+        Both = 0,
+        Header = 1,
+        Data = 2
+    }
 }
