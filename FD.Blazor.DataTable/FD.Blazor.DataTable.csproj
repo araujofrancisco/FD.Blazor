@@ -11,12 +11,12 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, boostrap, boostrap4, grid, table, datatable, sorting, virtualization, virtual, component</PackageTags>
-    <PackageReleaseNotes>Added property to allow hiding placeholder on virtualize component to avoid issues when rows are not fixed height.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added properties to allow specify the column style and apply to header/data or both.</PackageReleaseNotes>
     <RootNamespace>FD.Blazor</RootNamespace>
     <PackageId>FreelanceDevelopers.Blazor.DataTable</PackageId>
     <Company>Francisco Araujo</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
