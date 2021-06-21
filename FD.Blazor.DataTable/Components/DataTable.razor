@@ -13,7 +13,7 @@
                 <tr>
                     @foreach (DataTableColumn<TModel> column in visibleColumns)
                     {
-                        <th id=@column.Guid.ToString() style="@column.GetColumnRowDataStyle()">
+                        <th id=@column.Guid.ToString() style=@(column.ColumnStyle != ColumnStyle.Data ? @column.GetColumnRowDataStyle() : String.Empty)>
 
                             @if (column.HeaderTemplate != null)
                             {
@@ -63,7 +63,7 @@
                                 style="@(AllowRowSelection ? " cursor: pointer;" : "" )" @onclick="(args) => OnRowClickedEvent(args, item)" @attributes="RowAttributes">
                                 @foreach (DataTableColumn<TModel> column in visibleColumns)
                                 {
-                                    <td style="@column.GetColumnRowDataStyle()">
+                                    <td style=@(column.ColumnStyle != ColumnStyle.Header ? @column.GetColumnRowDataStyle() : String.Empty)>
                                         @if (column.RowTemplate != null)
                                             @column.RowTemplate(item)
                                             else if (column.ChildContent != null)

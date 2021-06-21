@@ -20,6 +20,8 @@
     [Parameter] public RenderFragment<TModel>? RowTemplate { get; set; }
 
     [Parameter] public TextAlignment TextAlignment { get; set; } = TextAlignment.Left;
+    [Parameter] public ColumnStyle ColumnStyle { get; set; } = ColumnStyle.Both;
+    [Parameter] public string Style { get; set; }
 
     /// <summary>
     /// The min width of the header (Default unit is vw)
@@ -88,7 +90,7 @@
         return "";
     }
 
-    public string GetColumnRowDataStyle() => $"text-align: {TextAlignment}; max-width: {MaxWidth}{MaxWidthUnit};";
+    public string GetColumnRowDataStyle() => $"text-align: {TextAlignment}; max-width: {MaxWidth}{MaxWidthUnit};{Style ?? String.Empty};";
 
     public event EventHandler? StateChanged;
     private void RaiseStateChanged()
