@@ -29,6 +29,7 @@
                 <InputCheckbox class="custom-control-lg" @bind-Value="@item.Selected"></InputCheckbox>
             </RowTemplate>
         </DataTableColumn>
+
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.Date.ToShortDateString()" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.TemperatureF" CustomTitle="Fahrenheit" />
@@ -37,6 +38,15 @@
         <DataTableColumn TModel="WeatherForecast" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
         <DataTableColumn TModel="WeatherForecast" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" 
                          ColumnStyle=ColumnStyle.Data Style="font-weight: 400;color: orangered;"/>
+
+        <DataTableColumn TModel="WeatherForecast" CustomTitle="Subscribe" TextAlignment="TextAlignment.Center">
+            <HeaderTemplate Context="title">
+                @title
+            </HeaderTemplate>
+            <RowTemplate Context="item">
+                <img class="bi-at" alt="Subscribe" title="Subscribe" @onclick=@((args) => { Console.WriteLine("Subscribed"); }) />                
+            </RowTemplate>
+        </DataTableColumn>
     </DataTable>
 </EditForm>
 
