@@ -54,7 +54,7 @@
 
     private EditContext editContext;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         editContext = new EditContext(new WeatherForecast[0]);
     }
