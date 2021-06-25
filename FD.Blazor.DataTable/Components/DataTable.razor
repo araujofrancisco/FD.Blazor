@@ -300,4 +300,13 @@
         // start the sorting
         await SortUpdate(SortColumn, SortDirection);
     }
+
+    /// <summary>
+    /// Does clear grid selection, setting SelectedItem to default(TModel).
+    /// </summary>
+    public void ClearSelection()
+    {
+        SelectedItem = default(TModel);
+        StateHasChanged();
+    }
 } 
