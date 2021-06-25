@@ -271,7 +271,7 @@
     {
         SelectedItem = (SelectedItem?.Equals(item) ?? false) ? default(TModel) : item;
         await RowClickedEvent.InvokeAsync(item);
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
@@ -304,9 +304,9 @@
     /// <summary>
     /// Does clear grid selection, setting SelectedItem to default(TModel).
     /// </summary>
-    public void ClearSelection()
+    public async Task ClearSelection()
     {
         SelectedItem = default(TModel);
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 } 
