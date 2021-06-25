@@ -11,7 +11,7 @@
 }
 
 <div style="margin: 6px;">
-    <button class="btn btn-primary" @onclick="@(() => _table.ClearSelection())">Clear Selection</button>
+    <button class="btn btn-primary" @onclick="@(async () => await _table.ClearSelection())">Clear Selection</button>
 </div>
 <EditForm EditContext="@editContext">
     <DataTable TModel="WeatherForecast" Items="LoadForecasts" @ref="_table"
