@@ -1,9 +1,8 @@
 ﻿@page "/TableStyling"
 
-@using FD.Blazor.Examples.Data
 @using System.Text.RegularExpressions
 
-@inject WeatherForecastService ForecastService
+@inject IDataService DataService
 
 @{
     string pattern = @"([(])?([+])?(\d{1})(\d{3})(\d{3})(\d{4})([)])?";
@@ -70,9 +69,9 @@
     /// <returns></returns>
     protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
     {
-        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
+        var fc = await DataService.GetForecastAsync();
         // simulates load time, this will allow us to verify virtualize placeholder is working
-        await Task.Run(() => Task.Delay(1000));
+        await Task.Run(() => Task.Delay(500));
         return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
     }
 }

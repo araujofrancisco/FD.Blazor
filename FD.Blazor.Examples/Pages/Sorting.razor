@@ -1,9 +1,8 @@
 ﻿@page "/sorting"
 
-@using FD.Blazor.Examples.Data
 @using System.Text.RegularExpressions
 
-@inject WeatherForecastService ForecastService
+@inject IDataService DataService 
 
 @{
     string pattern = @"([(])?([+])?(\d{1})(\d{3})(\d{3})(\d{4})([)])?";
@@ -20,7 +19,10 @@
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" />
     @* TODO: this column is not sortable due lack of implementation of IComparable in the resulting expression *@
-    <DataTableColumn TModel="WeatherForecast" IsSortable="false" Property=@((e) => string.Join("/", e.ReportTypes.ToArray())) CustomTitle="Frequency" />
+    @*<DataTableColumn TModel="WeatherForecast" IsSortable="false" Property=@((e) => e.ReportTypes != null ? string.Join("|", e.ReportTypes.Select(r => r.Name).ToArray()) : String.Empty)
+        CustomTitle="Frequency" />*@
+    @*<DataTableColumn TModel="WeatherForecast" IsSortable="false" Property=@((e) => string.Join("|", e.ForecastReportTypes.Select(f => f.ReportType).ToList().Select(r => r.Name).ToArray()))
+                     CustomTitle="Frequency" />*@
 </DataTable>
 
 
@@ -36,8 +38,8 @@
     /// <returns></returns>
     protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
     {
-        var fc = await ForecastService.GetForecastAsync(DateTime.Now);
-        if (SortColumn != null) fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumn).ToArray() : fc.OrderByDescending(SortColumn).ToArray();
+        var fc = await DataService.GetForecastAsync();
+        if (SortColumn != null) fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumn).ToList() : fc.OrderByDescending(SortColumn).ToList();
         return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
     }
 }

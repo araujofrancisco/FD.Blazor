@@ -1,15 +1,12 @@
 using FD.Blazor.Examples.Data;
+using FD.SampleData.Contexts;
+using FD.SampleData.Data;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FD.Blazor.Examples
 {
@@ -28,7 +25,17 @@ namespace FD.Blazor.Examples
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+
+            // set dbcontext factory options and register it as singleton to allow using memory database
+            // until the service gets shutdown
+            services.AddDbContextFactory<WeatherForecastDbContext>();
+            services
+                .AddSingleton<SampleData.Interfaces.IDbContextFactory<WeatherForecastDbContext>, DbContextFactory<WeatherForecastDbContext>>()
+                // register the method to obtain a new context and creates the database if there is no a previous connection
+                .AddScoped(p => p.GetRequiredService<SampleData.Interfaces.IDbContextFactory<WeatherForecastDbContext>>().CreateContext())
+                // custom data access service
+                .AddScoped<IDataService, DataService>();
+            //services.AddSingleton<WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +62,22 @@ namespace FD.Blazor.Examples
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            SeedDb(app.ApplicationServices);
+        }
+
+        // on generated data seed size will indicate how many records we want to create
+        private const int seedSize = 1000;
+
+        /// <summary>
+        /// Executes database seeder just after all application services has started.
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        public void SeedDb(IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var context = scope.ServiceProvider.GetRequiredService<WeatherForecastDbContext>();
+            DbInitializer<WeatherForecastDbContext>.Initialize(context, seedSize);
         }
     }
 }
