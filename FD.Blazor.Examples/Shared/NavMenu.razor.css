@@ -60,3 +60,29 @@
         display: block;
     }
 }
+
+.hr-item {
+    display: block;
+
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+
+    border-radius: 4px;
+    height: 3rem;
+    align-items: center;
+    line-height: 3rem;
+
+    color: white;
+}
+
+.hr-title {
+    font-size: 0.9rem;
+    color: white;
+}
+
+hr.hr-text {
+    position: relative;
+    border: none;
+    height: 1px;
+    background: #999;
+}
