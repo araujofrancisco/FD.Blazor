@@ -10,6 +10,8 @@ namespace FD.Blazor.Core
         private readonly Dictionary<Guid, Task> _qTasks;
 
         public event EventHandler<Guid> QueueTask;
+        public event EventHandler<Guid> StartingTask;
+        public event EventHandler<Guid> CompletedTask;
 
         public TaskQueue(int? workers = 1)
         {
@@ -20,19 +22,11 @@ namespace FD.Blazor.Core
             _pcQ.CompletedTask += OnCompletedTask;
         }
 
-        protected virtual void OnStartingTask(object sender, Guid e)
-        {
-#if DEBUG
-            Console.WriteLine($"Starting task: {e}");
-#endif
-        }
+        protected virtual void OnStartingTask(object sender, Guid e) =>
+            StartingTask?.Invoke(sender, e);
 
-        protected virtual void OnCompletedTask(object sender, Guid e)
-        {
-#if DEBUG
-            Console.WriteLine($"Completed task: {e}");
-#endif
-        }
+        protected virtual void OnCompletedTask(object sender, Guid e) =>
+            CompletedTask?.Invoke(sender, e);
 
         public Task AddTask(Action action)
         {
