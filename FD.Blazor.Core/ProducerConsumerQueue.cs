@@ -37,11 +37,8 @@ namespace FD.Blazor.Core
                 IsRunningAsync = isRunningAsync;
             }
 
-            public void Execute() =>
-                Result = this.Function();
-
-            public async Task ExecuteAsync() =>
-                Result = await this.Function();
+            public async Task Execute() =>
+                Result = this.IsRunningAsync ? await this.Function() : this.Function();
             
             public TItem GetResult() =>
                 Result;
@@ -110,13 +107,7 @@ namespace FD.Blazor.Core
                     try
                     {
                         StartingTask?.Invoke(workItem, workItem.Guid);
-
-                        // execution type depends on if function received can or not be running asynchronously
-                        if (workItem.IsRunningAsync)
-                            await workItem.ExecuteAsync();
-                        else
-                            workItem.Execute();
-
+                        await workItem.Execute();
                         workItem.TaskSource.SetResult(null);   // Indicate completion
                         CompletedTask?.Invoke(workItem, workItem.Guid);
                     }
