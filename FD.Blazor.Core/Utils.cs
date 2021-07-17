@@ -79,20 +79,6 @@ namespace FD.Blazor.Core
         }
 
         /// <summary>
-        /// Does creates a BinaryExpression that represents an AndAlso with the two provided expressions.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="left"></param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        [Obsolete("And method is deprecated, please use Operation method instead.", true)]
-        public static Expression<Func<T, bool>> And<T>(Expression<Func<T, bool>> left, Expression<Func<T, bool>> right)
-        {
-            var invokedExpr = Expression.Invoke(right, left.Parameters.Cast<Expression>());
-            return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(left.Body, invokedExpr), left.Parameters);
-        }
-
-        /// <summary>
         /// Does creates a BinaryExpression that represents an ExpressionType with the two provided expressions.
         /// </summary>
         /// <typeparam name="T"></typeparam>
