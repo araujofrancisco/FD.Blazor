@@ -21,22 +21,37 @@ namespace TaskQueueTest
                 for (int i = 0; i < 15; ++i)
                 {
                     var jobid = i;
-                    tq.Enqueue(async () => await someWork(jobid));
+                    if (jobid % 2 == 0)
+                        tq.Enqueue(async () => await someWorkAsync(jobid));
+                    else
+                        tq.Enqueue(() => someWork(jobid));
                 }
+                tq.CompleteAdding();
             });
             Task.WaitAll(producer);
 
             while (tq.Count > 0)
-                Task.Delay(500);
+                Task.Delay(250);
         }
-        
-        private static async Task<int> someWork(int i)
+
+        private static int someWork(int i)
         {
             var rnd = new Random();
-            int timeout = rnd.Next(1000 * 10);
+            int timeout = rnd.Next(1000 * 5);
+
+            Task.Delay(timeout);
+            Console.WriteLine($"Task ({i}) done synchronously.");
+
+            return timeout;
+        }
+
+        private static async Task<int> someWorkAsync(int i)
+        {
+            var rnd = new Random();
+            int timeout = rnd.Next(1000 * 5);
 
             await Task.Delay(timeout);
-            Console.WriteLine($"Task ({i}) done.");
+            Console.WriteLine($"Task ({i}) done asynchronously.");
 
             return timeout;
         }
@@ -52,8 +67,6 @@ namespace TaskQueueTest
             var workItem = (ProducerConsumerQueue<int>.WorkItem<int>)sender;
             var x = workItem.GetResult();
             Console.WriteLine($"Completed task {e} with a timeout of {x}");
-            if (tq.RemoveTask(e, out Task task))
-                Console.WriteLine($"Removed task {e} from queue");
         }
     }
 }
