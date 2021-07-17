@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /FD.Blazor.Core/push_nuget.bat
 /FD.Blazor.DataTable/push_nuget.bat
+/FD.Blazor.Core/push_nuget_local.bat
