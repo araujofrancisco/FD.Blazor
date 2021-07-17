@@ -4,14 +4,17 @@ using System.Threading.Tasks;
 
 namespace FD.Blazor.Core
 {
-    public class TaskQueue
+    public class TaskQueue<T>
+        where T : new()
     {
-        private readonly ProducerConsumerQueue _pcQ;
+        private readonly ProducerConsumerQueue<T> _pcQ;
         private readonly Dictionary<Guid, Task> _qTasks;
 
         public event EventHandler<Guid> QueueTask;
         public event EventHandler<Guid> StartingTask;
         public event EventHandler<Guid> CompletedTask;
+
+        public int Count { get => _qTasks.Count; }
 
         public TaskQueue(int? workers = 1)
         {
@@ -28,19 +31,16 @@ namespace FD.Blazor.Core
         protected virtual void OnCompletedTask(object sender, Guid e) =>
             CompletedTask?.Invoke(sender, e);
 
-        public Task AddTask(Action action)
+        public Task Enqueue(Func<Task<T>> function)
         {
             Guid guid = Guid.NewGuid();
 
-            Task newTask = _pcQ.EnqueueTask(guid, action);
+            Task newTask = _pcQ.EnqueueTask(guid, function);
             _qTasks.Add(guid, newTask);
             QueueTask?.Invoke(newTask, guid);
 
             return newTask;
         }
-
-        public int Count() =>
-            _qTasks.Count;
 
         /// <summary>
         /// Find a task by guid, returning true if found and setting output to task parameter.
