@@ -16,25 +16,31 @@ namespace FD.Blazor.Core
             where TItem : new()
         {
             public readonly TaskCompletionSource<object> TaskSource;
-            public readonly Func<Task<TItem>> Function;
+            public readonly dynamic Function;
             public readonly CancellationToken? CancelToken;
             public readonly Guid Guid;
+            public readonly bool IsRunningAsync;
 
             private TItem Result;
 
             public WorkItem(
                 TaskCompletionSource<object> taskSource,
                 Guid guid,
-                Func<Task<TItem>> function,
-                CancellationToken? cancelToken)
+                dynamic function,
+                CancellationToken? cancelToken,
+                bool isRunningAsync)
             {
                 TaskSource = taskSource;
                 Guid = guid;
                 Function = function;
                 CancelToken = cancelToken;
+                IsRunningAsync = isRunningAsync;
             }
 
-            public async Task Execute() =>
+            public void Execute() =>
+                Result = this.Function();
+
+            public async Task ExecuteAsync() =>
                 Result = await this.Function();
             
             public TItem GetResult() =>
@@ -59,18 +65,36 @@ namespace FD.Blazor.Core
             GC.SuppressFinalize(this);
         }
 
+        #region " Synchronous function "
+        public Task EnqueueTask(Func<TQueue> function) =>
+            EnqueueTask(Guid.NewGuid(), function);
+        public Task EnqueueTask(Guid guid, Func<TQueue> function) =>
+            EnqueueTask(guid, function, null);
+
+        public Task EnqueueTask(Guid guid, Func<TQueue> function, CancellationToken? cancelToken) =>
+            EnqueueTask(guid, function, cancelToken, false);
+        #endregion
+
+        #region " Asynchronous function "
         public Task EnqueueTask(Func<Task<TQueue>> function) =>
             EnqueueTask(Guid.NewGuid(), function);
 
         public Task EnqueueTask(Guid guid, Func<Task<TQueue>> function) =>
             EnqueueTask(guid, function, null);
 
-        public Task EnqueueTask(Guid guid, Func<Task<TQueue>> function, CancellationToken? cancelToken)
+        public Task EnqueueTask(Guid guid, Func<Task<TQueue>> function, CancellationToken? cancelToken) =>
+            EnqueueTask(guid, function, cancelToken, true);
+        #endregion
+
+        private Task EnqueueTask(Guid guid, dynamic function, CancellationToken? cancelToken, bool IsRunningAsync)
         {
             var tcs = new TaskCompletionSource<object>();
-            _taskQ.Add(new WorkItem<TQueue>(tcs, guid, function, cancelToken));
+            _taskQ.Add(new WorkItem<TQueue>(tcs, guid, function, cancelToken, IsRunningAsync));
             return tcs.Task;
         }
+
+        public void CompleteAdding() =>
+            _taskQ.CompleteAdding();
 
         /// <summary>
         /// Consume items in order (FIFO).
@@ -86,7 +110,13 @@ namespace FD.Blazor.Core
                     try
                     {
                         StartingTask?.Invoke(workItem, workItem.Guid);
-                        await workItem.Execute();
+
+                        // execution type depends on if function received can or not be running asynchronously
+                        if (workItem.IsRunningAsync)
+                            await workItem.ExecuteAsync();
+                        else
+                            workItem.Execute();
+
                         workItem.TaskSource.SetResult(null);   // Indicate completion
                         CompletedTask?.Invoke(workItem, workItem.Guid);
                     }
