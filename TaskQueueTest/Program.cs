@@ -6,54 +6,64 @@ namespace TaskQueueTest
 {
     class Program
     {
-        private static TaskQueue<int> tq;
+        private static readonly TaskQueue<dynamic> tq = new(1);
+        private static readonly Random rnd = new();
 
         static void Main(string[] args)
         {
-            tq = new TaskQueue<int>(1);
-
             tq.QueueTask += OnQueueTask;
             tq.StartingTask += OnStartingTask;
             tq.CompletedTask += OnCompletedTask;
 
+            // queue some jobs to execute using our TaskQueue
             Task producer = Task.Factory.StartNew(() =>
             {
-                for (int i = 0; i < 15; ++i)
+                for (int i = 0; i < 30; ++i)
                 {
-                    var jobid = i;
-                    if (jobid % 2 == 0)
-                        tq.Enqueue(async () => await someWorkAsync(jobid));
+                    var jobId = i;
+                    // odd jobs runs synchronously
+                    if (jobId % 2 == 0)
+                        if (jobId < 15)
+                            tq.Enqueue(async () => await someWorkAsync<int>(jobId));
+                        else
+                            tq.Enqueue(async () => await someWorkAsync<string>(jobId));
                     else
-                        tq.Enqueue(() => someWork(jobid));
+                        if (jobId < 15)
+                        tq.Enqueue(() => someWork<int>(jobId));
+                    else
+                        tq.Enqueue(() => someWork<string>(jobId));
                 }
                 tq.CompleteAdding();
             });
             Task.WaitAll(producer);
 
             while (tq.Count > 0)
-                Task.Delay(250);
+                Task.Delay(1000);
         }
 
-        private static int someWork(int i)
-        {
-            var rnd = new Random();
-            int timeout = rnd.Next(1000 * 5);
+        private static int GetTimeout() =>
+            rnd.Next(1000 * 5);     // random timeout 0 - 5 seconds
 
+        private static TResult someWork<TResult>(int jobId)
+        {
+            int timeout = GetTimeout();
             Task.Delay(timeout);
-            Console.WriteLine($"Task ({i}) done synchronously.");
+            Console.WriteLine($"Task ({jobId}) done synchronously.");
 
-            return timeout;
+            return (TResult)(typeof(TResult) == typeof(string) ? 
+                Convert.ChangeType($"{timeout.ToString("X4")}", typeof(TResult)) : 
+                Convert.ChangeType(timeout, typeof(TResult)));
         }
 
-        private static async Task<int> someWorkAsync(int i)
+        private static async Task<TResult> someWorkAsync<TResult>(int jobId)
         {
-            var rnd = new Random();
-            int timeout = rnd.Next(1000 * 5);
-
+            int timeout = GetTimeout();
             await Task.Delay(timeout);
-            Console.WriteLine($"Task ({i}) done asynchronously.");
+            Console.WriteLine($"Task ({jobId}) done asynchronously.");
 
-            return timeout;
+            return (TResult)(typeof(TResult) == typeof(string) ?
+                Convert.ChangeType($"{timeout.ToString("X4")}", typeof(TResult)) :
+                Convert.ChangeType(timeout, typeof(TResult)));
         }
 
         private static void OnQueueTask(object sender, Guid e) =>
@@ -64,9 +74,9 @@ namespace TaskQueueTest
 
         private static void OnCompletedTask(object sender, Guid e) 
         {
-            var workItem = (ProducerConsumerQueue<int>.WorkItem<int>)sender;
-            var x = workItem.GetResult();
-            Console.WriteLine($"Completed task {e} with a timeout of {x}");
+            var workItem = (ProducerConsumerQueue<dynamic>.WorkItem<dynamic>)sender;
+            var result = workItem.GetResult();
+            Console.WriteLine($"Completed task {e} with a timeout of {result}");
         }
     }
 }
