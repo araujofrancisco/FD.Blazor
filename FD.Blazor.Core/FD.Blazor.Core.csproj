@@ -10,11 +10,11 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, linq, sorting, filtering, extension</PackageTags>
-    <PackageReleaseNotes>- Add ProducerConsumerQueue.
-- Add TaskQueue.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Add capability of queue synchronous and asynchronous tasks on ProducerConsumerQueue and TaskQueue.
+- Change CompletedTask event handler for TaskQueue to remove from tracking dictionary completed task.</PackageReleaseNotes>
     <PackageId>FreelanceDevelopers.Blazor.Core</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.7.6</Version>
+    <Version>1.0.7.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
