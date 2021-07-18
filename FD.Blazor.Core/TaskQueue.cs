@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FD.Blazor.Core
@@ -67,6 +68,13 @@ namespace FD.Blazor.Core
         /// <returns></returns>
         public bool GetTask(Guid guid, out Task task) =>
             _qTasks.TryGetValue(guid, out task);
+
+        /// <summary>
+        /// Returns an enumeration of tasks tracked in internal dictionary.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Task> GetTasks() =>
+            _qTasks.Select(t => t.Value);
 
         /// <summary>
         /// Remove a task from tracking dictionary leaving task in the queue.
