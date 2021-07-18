@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FD.Blazor.Core;
 
@@ -22,6 +23,7 @@ namespace TaskQueueTest
                 {
                     var jobId = i;
                     // odd jobs runs synchronously
+                    // jobs with id below 15 return integer, otherwise return a string
                     if (jobId % 2 == 0)
                         if (jobId < 15)
                             tq.Enqueue(async () => await someWorkAsync<int>(jobId));
@@ -35,10 +37,9 @@ namespace TaskQueueTest
                 }
                 tq.CompleteAdding();
             });
+            // wait on producer and queue tasks to complete
             Task.WaitAll(producer);
-
-            while (tq.Count > 0)
-                Task.Delay(1000);
+            Task.WaitAll(tq.GetTasks().ToArray());
         }
 
         private static int GetTimeout() =>
@@ -50,8 +51,9 @@ namespace TaskQueueTest
             Task.Delay(timeout);
             Console.WriteLine($"Task ({jobId}) done synchronously.");
 
+
             return (TResult)(typeof(TResult) == typeof(string) ? 
-                Convert.ChangeType($"{timeout.ToString("X4")}", typeof(TResult)) : 
+                Convert.ChangeType($"{timeout:X4}", typeof(TResult)) : 
                 Convert.ChangeType(timeout, typeof(TResult)));
         }
 
@@ -62,10 +64,11 @@ namespace TaskQueueTest
             Console.WriteLine($"Task ({jobId}) done asynchronously.");
 
             return (TResult)(typeof(TResult) == typeof(string) ?
-                Convert.ChangeType($"{timeout.ToString("X4")}", typeof(TResult)) :
+                Convert.ChangeType($"{timeout:X4}", typeof(TResult)) :
                 Convert.ChangeType(timeout, typeof(TResult)));
         }
 
+        #region " Queue events "
         private static void OnQueueTask(object sender, Guid e) =>
             Console.WriteLine($"Task {e} queue");
 
@@ -78,5 +81,6 @@ namespace TaskQueueTest
             var result = workItem.GetResult();
             Console.WriteLine($"Completed task {e} with a timeout of {result}");
         }
+        #endregion
     }
 }
