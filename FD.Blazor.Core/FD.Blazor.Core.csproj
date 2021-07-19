@@ -10,10 +10,10 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, linq, sorting, filtering, extension</PackageTags>
-    <PackageReleaseNotes>- Add method GetTasks for TaskQueue.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Add methods to accept Guid when enqueuing a new task.</PackageReleaseNotes>
     <PackageId>FreelanceDevelopers.Blazor.Core</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.7.8</Version>
+    <Version>1.0.7.9</Version>
   </PropertyGroup>
 
   <ItemGroup>
