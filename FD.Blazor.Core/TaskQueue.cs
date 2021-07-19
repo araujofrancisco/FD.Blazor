@@ -41,18 +41,24 @@ namespace FD.Blazor.Core
             CompletedTask?.Invoke(sender, e);
         }
         public Task Enqueue(Func<T> function) =>
-            EnqueueTask(function);
+            EnqueueTask(function, null);
+
+        public Task Enqueue(Func<T> function, Guid guid) =>
+            EnqueueTask(function, guid);
 
         public Task Enqueue(Func<Task<T>> function) =>
-            EnqueueTask(function);
-        
-        private Task EnqueueTask(dynamic function)
-        {
-            Guid guid = Guid.NewGuid();
+            EnqueueTask(function, null);
 
-            Task newTask = _pcQ.EnqueueTask(guid, function);
-            _qTasks.Add(guid, newTask);
-            QueueTask?.Invoke(newTask, guid);
+        public Task Enqueue(Func<Task<T>> function, Guid guid) =>
+            EnqueueTask(function, guid);
+
+        private Task EnqueueTask(dynamic function, Guid? guid)
+        {
+            guid ??= Guid.NewGuid();
+
+            Task newTask = _pcQ.EnqueueTask((Guid)guid, function);
+            _qTasks.Add((Guid)guid, newTask);
+            QueueTask?.Invoke(newTask, (Guid)guid);
 
             return newTask;
         }
