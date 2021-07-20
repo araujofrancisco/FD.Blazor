@@ -124,7 +124,7 @@ namespace FD.Blazor.Core
             };
 
         /// <summary>
-        /// Determinates if a method runs asynchronously.
+        /// Determinates if a method is marked to run asynchronously.
         /// </summary>
         /// <param name="classType"></param>
         /// <param name="methodName"></param>
@@ -137,20 +137,14 @@ namespace FD.Blazor.Core
         }
 
         /// <summary>
-        /// Determines if a method runs asynchronously.
+        /// Determines if a method is marked to run asynchronously.
         /// </summary>
         /// <param name="method"></param>
         /// <returns></returns>
-        public static bool IsAsyncMethod(MethodInfo method)
-        {
-            Type attType = typeof(AsyncStateMachineAttribute);
-
+        public static bool IsAsyncMethod(MethodInfo method) =>
             // Obtain the custom attribute for the method. 
             // The value returned contains the StateMachineType property. 
             // Null is returned if the attribute isn't present for the method. 
-            var attrib = (AsyncStateMachineAttribute)method.GetCustomAttribute(attType);
-
-            return (attrib != null);
-        }
+            (method.GetCustomAttribute<AsyncStateMachineAttribute>() != null);
     }
 }
