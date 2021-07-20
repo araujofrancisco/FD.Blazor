@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace FD.Blazor.Core
 {
@@ -119,6 +121,36 @@ namespace FD.Blazor.Core
                     left == null ? right : right == null ? left : Utils.Operation<T>(left, right, type),
                 false =>
                     Utils.Operation<T>(left, right, type)
-            };            
+            };
+
+        /// <summary>
+        /// Determinates if a method runs asynchronously.
+        /// </summary>
+        /// <param name="classType"></param>
+        /// <param name="methodName"></param>
+        /// <returns></returns>
+        public static bool IsAsyncMethod(Type classType, string methodName)
+        {
+            // Obtain the method with the specified name.
+            MethodInfo method = classType.GetMethod(methodName);
+            return IsAsyncMethod(method);
+        }
+
+        /// <summary>
+        /// Determines if a method runs asynchronously.
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static bool IsAsyncMethod(MethodInfo method)
+        {
+            Type attType = typeof(AsyncStateMachineAttribute);
+
+            // Obtain the custom attribute for the method. 
+            // The value returned contains the StateMachineType property. 
+            // Null is returned if the attribute isn't present for the method. 
+            var attrib = (AsyncStateMachineAttribute)method.GetCustomAttribute(attType);
+
+            return (attrib != null);
+        }
     }
 }
