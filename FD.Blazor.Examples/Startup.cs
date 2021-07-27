@@ -67,7 +67,7 @@ namespace FD.Blazor.Examples
         }
 
         // on generated data seed size will indicate how many records we want to create
-        private const int seedSize = 1000;
+        private const int seedSize = 500;
 
         /// <summary>
         /// Executes database seeder just after all application services has started.
