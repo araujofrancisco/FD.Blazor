@@ -18,6 +18,7 @@
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property=@((e) => TimeSpan.FromSeconds(e.DaylightTime).DurationToString()) CustomTitle="Daylight Time" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => Regex.Replace(e.Phone, pattern, repl)" CustomTitle="Forecasts phone" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.WhenUpdated.HasValue ? e.WhenUpdated.Value.ToShortDateString() : String.Empty" CustomTitle="Updated" />
+    <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Location.City" CustomTitle="City" />
 
     @* TODO: this column is not sortable due lack of implementation of IComparable in the resulting expression *@
     <DataTableColumn TModel="WeatherForecast" CustomTitle="Frequency">
