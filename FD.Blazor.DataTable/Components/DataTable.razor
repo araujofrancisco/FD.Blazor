@@ -118,7 +118,7 @@
 
 @code {
     [Parameter] public Func<ItemsProviderRequest, ValueTask<ItemsProviderResult<TModel>>> Items { get; set; }
-    [Parameter] public Action<string, SortDirection>? SortChanged { get; set; }
+    [Parameter] public Action<string, SortDirection, Expression<Func<TModel, object>>>? SortChanged { get; set; }
     [Parameter] public EventCallback<TModel> RowClickedEvent { get; set; }
 
     [Parameter] public string ContainerCssClass { get; set; } = "table-responsive";
@@ -142,6 +142,7 @@
     private Guid? SortColumnGuid { get; set; }
     private SortDirection SortDirection { get; set; } = SortDirection.Ascending;
     private string? SortColumn { get; set; }
+    private Expression<Func<TModel, object>>? SortColumnExpr { get; set; }
 
     /// <summary>
     /// Returns the default sort column.
@@ -171,7 +172,7 @@
         }
     }
 
-    private IList<DataTableColumn<TModel>> Columns { get; set; } = new List<DataTableColumn<TModel>>();
+    public IList<DataTableColumn<TModel>> Columns { get; set; } = new List<DataTableColumn<TModel>>();
 
     private string GetTableStyleCssClasses()
     {
@@ -195,8 +196,9 @@
             SortColumnGuid = column.Guid;
             SortDirection = column.DefaultSortDirection;
             SortColumn = column.GetColumnVisualPropertyName();
+            SortColumnExpr = IsModelColumn(SortColumn) ? null : column.Property;
 
-            SortChanged(SortColumn, SortDirection);
+            SortChanged(SortColumn, SortDirection, SortColumnExpr);
         }
 
         StateHasChanged();
@@ -255,9 +257,9 @@
     /// <param name="SortColumn"></param>
     /// <param name="SortDirection"></param>
     /// <returns></returns>
-    protected async Task SortUpdate(string SortColumn, SortDirection SortDirection)
+    protected async Task SortUpdate(string SortColumn, SortDirection SortDirection, Expression<Func<TModel, object>> SortColumnExpr)
     {
-        SortChanged(SortColumn, SortDirection);
+        SortChanged(SortColumn, SortDirection, SortColumnExpr);
         await Refresh();
     }
 
@@ -296,9 +298,10 @@
         {
             SortColumnGuid = column.Guid;
             SortColumn = column.GetColumnPropertyName();
+            SortColumnExpr = IsModelColumn(SortColumn) ? null : column.Property;
         }
         // start the sorting
-        await SortUpdate(SortColumn, SortDirection);
+        await SortUpdate(SortColumn, SortDirection, SortColumnExpr);
     }
 
     /// <summary>
@@ -309,4 +312,7 @@
         SelectedItem = default(TModel);
         await InvokeAsync(StateHasChanged);
     }
+
+    private bool IsModelColumn(string columnName) =>
+        typeof(TModel).GetProperties().Where(p => p.Name.Equals(columnName)).Any();
 } 
