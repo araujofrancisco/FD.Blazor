@@ -11,12 +11,14 @@
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor, boostrap, boostrap4, grid, table, datatable, sorting, virtualization, virtual, component</PackageTags>
-    <PackageReleaseNotes>Changed calls to StatusHasChanged on asynchronous methods to use InvokeAsync.</PackageReleaseNotes>
+    <PackageReleaseNotes>- Change DataTable columns collection to be public.
+- Add SortColumnExpr property to return the expression for sorting when column is not in the model.
+- Add SortColumnExpr parameter to SortChanged event.</PackageReleaseNotes>
     <RootNamespace>FD.Blazor</RootNamespace>
     <PackageId>FreelanceDevelopers.Blazor.DataTable</PackageId>
     <Company>Francisco Araujo</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.6</Version>
+    <Version>1.0.6.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
