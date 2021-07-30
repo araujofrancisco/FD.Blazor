@@ -9,7 +9,7 @@
     string repl = @"+$3 ($4) $5-$6";
 }
 
-<DataTable TModel="WeatherForecast" Items="LoadForecasts" SortChanged="(c, d) => { this.SortColumn = c; this.SortDirection = d; }">
+<DataTable @ref="_table" TModel="WeatherForecast" Items="LoadForecasts" SortChanged="(c, d, e) => { this.SortColumn = c; this.SortDirection = d; this.SortColumnExpr = e; }">
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.Date.ToShortDateString()"
                      IsDefaultSortColumn="true" DefaultSortDirection="SortDirection.Descending" />
     <DataTableColumn TModel="WeatherForecast" IsSortable="true" Property="(e) => e.TemperatureC" CustomTitle="Celsius" />
@@ -36,6 +36,9 @@
 
     private string SortColumn { get; set; }
     private SortDirection SortDirection { get; set; }
+    private Expression<Func<WeatherForecast, object>>? SortColumnExpr { get; set; }
+
+    private DataTable<WeatherForecast> _table;
 
     /// <summary>
     /// ItemProvider for Virtualize component, this will retrieve the data from our service and manage records that will be shown.
@@ -45,7 +48,17 @@
     protected async ValueTask<ItemsProviderResult<WeatherForecast>> LoadForecasts(ItemsProviderRequest request)
     {
         var fc = await DataService.GetForecastAsync();
-        if (SortColumn != null) fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumn).ToList() : fc.OrderByDescending(SortColumn).ToList();
+        try
+        {
+            if (SortColumnExpr != null)
+                fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumnExpr.Compile()).ToList() : fc.OrderByDescending(SortColumnExpr.Compile()).ToList();
+            else if (SortColumn != null)
+                fc = (SortDirection == SortDirection.Ascending) ? fc.OrderBy(SortColumn).ToList() : fc.OrderByDescending(SortColumn).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
         return new ItemsProviderResult<WeatherForecast>(fc.Skip(request.StartIndex).Take(request.Count), fc.Count());
     }
 }
