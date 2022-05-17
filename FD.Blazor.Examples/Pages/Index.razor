@@ -1,6 +1,12 @@
 ﻿@page "/"
 
+
 <h1>FD.Blazor.Examples</h1>
 
 Collection of examples uses for FD.Blazor Components.
 
+<p>Session Id: <strong>@SessionStateProvider?.SessionId</strong></p>    
+
+@code{
+    [CascadingParameter] SessionStateProvider SessionStateProvider { get; set; }
+}

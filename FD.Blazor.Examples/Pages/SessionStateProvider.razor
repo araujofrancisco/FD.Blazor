@@ -1,0 +1,42 @@
+﻿@inject ProtectedLocalStorage ProtectedLocalStorage
+
+@if (hasLoaded)
+{
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    public string SessionId;
+    bool hasLoaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            // if no session found on localstorage we generate a new session id
+            // using localstorage to share session between tabs
+            SessionId = (await ProtectedLocalStorage.GetAsync<string>("SessionId")).Value ?? "";
+            if (String.IsNullOrEmpty(SessionId))
+            { 
+                SessionId = Guid.NewGuid().ToString();
+                await SaveSessionId();
+            }
+            hasLoaded = true;
+            StateHasChanged();
+        }        
+    }
+
+    private async Task SaveSessionId()
+    {
+        await ProtectedLocalStorage.SetAsync("SessionId", SessionId);
+    }
+}
