@@ -24,7 +24,17 @@ else
         {
             // if no session found on localstorage we generate a new session id
             // using localstorage to share session between tabs
-            SessionId = (await ProtectedLocalStorage.GetAsync<string>("SessionId")).Value ?? "";
+            try
+            {
+                SessionId = (await ProtectedLocalStorage.GetAsync<string>("SessionId")).Value ?? "";
+            }
+            catch (System.Security.Cryptography.CryptographicException ex)
+            {
+                // when the error is payload was invalid is probably caused by an key that was created before
+                // for now we are going to ignore it and try to generate a new value
+                Console.WriteLine(ex);
+            }
+
             if (String.IsNullOrEmpty(SessionId))
             { 
                 SessionId = Guid.NewGuid().ToString();
