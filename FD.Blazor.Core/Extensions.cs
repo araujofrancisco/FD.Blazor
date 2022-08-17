@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+//using System.Linq.Expressions;
 
 namespace FD.Blazor.Core
 {
@@ -95,37 +95,37 @@ namespace FD.Blazor.Core
                 : elsePath(elements);
         }
 
-        /// <summary>
-        /// Returns distinct elements on a enumeration using provided function as comparer.
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <returns></returns>
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            HashSet<TKey> seenKeys = new HashSet<TKey>();
-            foreach (TSource element in source)
-            {
-                if (seenKeys.Add(keySelector(element)))
-                {
-                    yield return element;
-                }
-            }
-        }
+        ///// <summary>
+        ///// Returns distinct elements on a enumeration using provided function as comparer.
+        ///// </summary>
+        ///// <typeparam name="TSource"></typeparam>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="keySelector"></param>
+        ///// <returns></returns>
+        //public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        //{
+        //    HashSet<TKey> seenKeys = new HashSet<TKey>();
+        //    foreach (TSource element in source)
+        //    {
+        //        if (seenKeys.Add(keySelector(element)))
+        //        {
+        //            yield return element;
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Returns distinct elements on a IQuaryable using provided function as comparer.
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="keySelector"></param>
-        /// <returns></returns>
-        public static IQueryable<TSource> DistinctBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
-        {
-            return source.GroupBy(keySelector).Select(x => x.FirstOrDefault());
-        }
+        ///// <summary>
+        ///// Returns distinct elements on a IQuaryable using provided function as comparer.
+        ///// </summary>
+        ///// <typeparam name="TSource"></typeparam>
+        ///// <typeparam name="TKey"></typeparam>
+        ///// <param name="source"></param>
+        ///// <param name="keySelector"></param>
+        ///// <returns></returns>
+        //public static IQueryable<TSource> DistinctBy<TSource, TKey>(this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+        //{
+        //    return source.GroupBy(keySelector).Select(x => x.FirstOrDefault());
+        //}
     }
 }
