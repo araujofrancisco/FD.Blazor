@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Francisco Araujo</Authors>
     <Description>Library including some code functions and extensions to use on FD.Blazor Components.</Description>
-    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseExpression>
+    </PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/araujofrancisco/FD.Blazor/tree/main/FD.Blazor.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/araujofrancisco/FD.Blazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -13,14 +13,13 @@
     <PackageReleaseNotes>- Add method to determines if a method is running asynchronously.</PackageReleaseNotes>
     <PackageId>FreelanceDevelopers.Blazor.Core</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>
+      </PackagePath>
     </None>
   </ItemGroup>
-
 </Project>
