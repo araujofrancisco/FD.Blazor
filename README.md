@@ -12,3 +12,5 @@ Features a handful set of classes to easy common tasks.
 
 <h3>FD.Blazor.DataTable</h3>
 A blazor datatable component that features a column sorting and basic styling. Implemented using blazor Virtualize.
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/araujofrancisco/FD.Blazor)
